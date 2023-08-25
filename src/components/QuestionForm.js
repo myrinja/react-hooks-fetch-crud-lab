@@ -19,7 +19,45 @@ function QuestionForm(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData);
+
+    // Create the question object to be sent in the POST request
+    const newQuestion = {
+      prompt: formData.prompt,
+      answers: [
+        formData.answer1,
+        formData.answer2,
+        formData.answer3,
+        formData.answer4,
+      ],
+      correctIndex: parseInt(formData.correctIndex),
+    };
+
+    // Send POST request to add the new question
+    fetch("http://localhost:4000/questions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newQuestion),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Call the callback function to update the question list in the parent component
+        props.onAddQuestion(data);
+
+        // Clear the form after successful submission
+        setFormData({
+          prompt: "",
+          answer1: "",
+          answer2: "",
+          answer3: "",
+          answer4: "",
+          correctIndex: 0,
+        });
+      })
+      .catch(error => {
+        console.error("Error adding question:", error);
+      });
   }
 
   return (
@@ -35,6 +73,8 @@ function QuestionForm(props) {
             onChange={handleChange}
           />
         </label>
+        <br />
+
         <label>
           Answer 1:
           <input
@@ -44,6 +84,8 @@ function QuestionForm(props) {
             onChange={handleChange}
           />
         </label>
+        <br />
+
         <label>
           Answer 2:
           <input
@@ -53,6 +95,8 @@ function QuestionForm(props) {
             onChange={handleChange}
           />
         </label>
+        <br />
+
         <label>
           Answer 3:
           <input
@@ -62,6 +106,8 @@ function QuestionForm(props) {
             onChange={handleChange}
           />
         </label>
+        <br />
+
         <label>
           Answer 4:
           <input
@@ -71,6 +117,8 @@ function QuestionForm(props) {
             onChange={handleChange}
           />
         </label>
+        <br />
+
         <label>
           Correct Answer:
           <select
@@ -78,12 +126,14 @@ function QuestionForm(props) {
             value={formData.correctIndex}
             onChange={handleChange}
           >
-            <option value="0">{formData.answer1}</option>
-            <option value="1">{formData.answer2}</option>
-            <option value="2">{formData.answer3}</option>
-            <option value="3">{formData.answer4}</option>
+            <option value="0">Answer 1</option>
+            <option value="1">Answer 2</option>
+            <option value="2">Answer 3</option>
+            <option value="3">Answer 4</option>
           </select>
         </label>
+        <br />
+
         <button type="submit">Add Question</button>
       </form>
     </section>
